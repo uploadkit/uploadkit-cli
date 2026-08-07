@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+    steps:
+      - name: Checkout uploadkit-cli
+        uses: actions/checkout@v4
+        with:
+          path: uploadkit-cli
+
+      - name: Checkout dependencies
+        uses: actions/checkout@v4
+        with:
+          repository: uploadkit/uploadkit
+          path: uploadkit
+
+      - uses: actions/checkout@v4
+        with:
+          repository: uploadkit/uploadkit-security
+          path: uploadkit-security
+
+      - uses: actions/checkout@v4
+        with:
+          repository: uploadkit/uploadkit-testing
+          path: uploadkit-testing
+
+      - uses: actions/checkout@v4
+        with:
+          repository: uploadkit/uploadkit-pdf
+          path: uploadkit-pdf
+
+      - uses: actions/checkout@v4
+        with:
+          repository: uploadkit/uploadkit-office
+          path: uploadkit-office
+
+      - uses: actions/checkout@v4
+        with:
+          repository: uploadkit/uploadkit-audio
+          path: uploadkit-audio
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          allow-prereleases: true
+
+      - name: Install packages
+        working-directory: uploadkit-cli
+        run: |
+          pip install -e ../uploadkit -e ../uploadkit-security -e ../uploadkit-testing
+          pip install -e ../uploadkit-pdf -e ../uploadkit-office -e ../uploadkit-audio
+          pip install -e ".[dev]"
+
+      - name: Test
+        working-directory: uploadkit-cli
+        run: pytest -q
