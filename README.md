@@ -42,6 +42,15 @@ uploadkit doctor
 
 Exit code `1` on validation failure (CI-friendly with `--json`).
 
+## Coverage
+
+No coverage badge yet. CI runs pytest without a coverage gate, and current
+smoke tests leave many CLI branches unexercised (missing optional extras,
+inspect error paths, flag variants) — about **65%** when measured locally.
+
+A coverage badge will be added once CI enforces a gate. Unlike Core /
+framework adapters, this package does not claim 100% coverage.
+
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md).
